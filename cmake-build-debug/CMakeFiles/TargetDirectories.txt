@@ -1,0 +1,2 @@
+/Users/macbookpro/Desktop/TraySketch.0/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/macbookpro/Desktop/TraySketch.0/cmake-build-debug/CMakeFiles/edit_cache.dir
