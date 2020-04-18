@@ -25,7 +25,6 @@
 const char *SSID = "life";
 const char *WiFiPassword = "88888888";
 String payload;
-int sm_server = 70;
-String sm;
+int sm_server;
 
 #endif //AI_FRESH_01_VALUES_H

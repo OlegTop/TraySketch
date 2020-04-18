@@ -80,34 +80,32 @@ void TaskLoop(void *pvParameters) {
 
     String buf_rs_console = "";           //буфер хранения текста с консоли
 
-    for (;;) {//с этого места начинаются твои приключения. используюй это как старый добрый loop и не заморачивайся
-    if(WiFi.status() != WL_CONNECTED){
+    for (;;) {
+        int pots_amount = 20;
+        HTTPClient http;
+        if(WiFi.status() != WL_CONNECTED){
         Serial.println("No connection!");
         ConnectToWiFi();
     }else {
-        if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
 
-            HTTPClient http;
-
-            http.begin("http://vkram.shpp.me:5000/humidity?token=413edd445c7e487da52ceef017071e69&tray_id=0&sector_id=0"); //Specify the URL
-            int httpCode = http.GET();                                        //Make the request
+            http.begin("vkram.shpp.me:5000/tray_size?token=413edd445c7e487da52ceef017071e69&tray_id=0"); //Specify the URL
+            int httpCode = http.GET();//Make the request
 
             if (httpCode > 0) { //Check for the returning code
-
                 String payload = http.getString();
-                sm = payload;
+                http.end(); //Free the resources
                 Serial.println(payload);
-                sm_server = sm.toInt();
-                Serial.println("Converted moisture = " + sm.toInt());
+                pots_amount= payload.toInt();
+                Serial.print("Amount of pots = ");
+                Serial.println(pots_amount);
             }
             else {
                 Serial.println("Error on HTTP request");
             }
-            http.end(); //Free the resources
-        }
-
     }
-    delay(10000);
+    for(int i = 1; i<=pots_amount;i++){
+
+
     }
     fpause(4);}//не трожь меня
 

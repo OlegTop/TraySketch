@@ -136,8 +136,6 @@ void ConnectToWiFi()
     while (WiFi.status() != WL_CONNECTED)
     {
         Serial.print('.');
-        delay(500);
-
         if ((++i % 16) == 0)
         {
             Serial.println(F(" still trying to connect"));
