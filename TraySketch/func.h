@@ -125,33 +125,27 @@ String wifi_scan(){
 }
 
 //Подключение к точке доступа
-unsigned char wifi_connect(){
+void ConnectToWiFi()
+{
 
-    const char* w_name;
-    const char* w_pass;
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(SSID, WiFiPassword);
+    Serial.print("Connecting to "); Serial.println(SSID);
 
-    if(wifi_name != "") w_name = wifi_name.c_str(); else return 1;
-    
-    if(wifi_pass != ""){
-        w_pass = wifi_pass.c_str();
-        WiFi.begin(w_name, w_pass);
-    }else WiFi.begin(w_name);
+    uint8_t i = 0;
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        Serial.print('.');
+        delay(500);
 
-
-    short int inc=0;
-    while (WiFi.status() != WL_CONNECTED) {
-        fpause(44);
-        inc++;
-        if(inc > 400)break;
+        if ((++i % 16) == 0)
+        {
+            Serial.println(F(" still trying to connect"));
+        }
     }
-
-    if(WiFi.status() != WL_CONNECTED) return 2;
-
-    local_id = WiFi.localIP().toString();
-    mac_dev = String(WiFi.macAddress());
-    wifi_rssi = WiFi.RSSI();
-
-    return 0;
+    Serial.println();
+    Serial.print(F("Connected. My IP address is: "));
+    Serial.println(WiFi.localIP());
 }
 
 //Установка регистров в определенную позицию

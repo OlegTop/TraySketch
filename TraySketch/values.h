@@ -22,7 +22,10 @@
 /*Буфер IP*/                    String local_id;
 /*Буфер MAC-адреса*/            String mac_dev;
 /*Буфер силы сигнала wifi*/     int wifi_rssi;
-/*Буфер имети точки доступа*/   String wifi_name;
-/*Буфер пароля к точке доступа*/String wifi_pass;
+const char *SSID = "life";
+const char *WiFiPassword = "88888888";
+String payload;
+int sm_server = 70;
+String sm;
 
 #endif //AI_FRESH_01_VALUES_H

@@ -15,6 +15,8 @@ PSRAM: Disabled
 #include <WiFi.h>               //я тебе заодно нормальные функции поиска точек и подключния сделал (wifi_scan, wifi_connect), места не занимают, зато избвят от костылей, всегда можешь потом удалить
 #include <Adafruit_NeoPixel.h>  //либа для управления адресной лентой
 #include "func.h"               // отдельный файл со всеми функциями (все к слову в функциональном стиле, никакого ООП)
+#include <HTTPClient.h>
+
 
 //ниже конфигуровщик FreeRTOS, точнее ESP32 на уровне железа его поддерживает но ето лучше писать, это интерпритатор с ардуиной
 #if CONFIG_FREERTOS_UNICORE
@@ -79,38 +81,33 @@ void TaskLoop(void *pvParameters) {
     String buf_rs_console = "";           //буфер хранения текста с консоли
 
     for (;;) {//с этого места начинаются твои приключения. используюй это как старый добрый loop и не заморачивайся
+    if(WiFi.status() != WL_CONNECTED){
+        Serial.println("No connection!");
+        ConnectToWiFi();
+    }else {
+        if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
 
-      /*
+            HTTPClient http;
 
-      Ниже консольный тестер
-      первый символ - модификатор уровня, потом порядковый номер а потом статус
+            http.begin("http://vkram.shpp.me:5000/humidity?token=413edd445c7e487da52ceef017071e69&tray_id=0&sector_id=0"); //Specify the URL
+            int httpCode = http.GET();                                        //Make the request
 
-      к примеру хочешь включить 8 клапан - пишешь в консоль "R 8 1" (в кавычках то что в консоль)
-      выключить его же - "R 8 0"
+            if (httpCode > 0) { //Check for the returning code
 
+                String payload = http.getString();
+                sm = payload;
+                Serial.println(payload);
+                sm_server = sm.toInt();
+                Serial.println("Converted moisture = " + sm.toInt());
+            }
+            else {
+                Serial.println("Error on HTTP request");
+            }
+            http.end(); //Free the resources
+        }
 
-      индикация по тому же принципу только иной модификатор - "L 8 1"
-      
-      */
+    }
+    delay(10000);
+    }
+    fpause(4);}//не трожь меня
 
-              if(Serial.available() > 0) {
-            char char_buf = Serial.read();
-            if(char_buf != '\n') buf_rs_console += char_buf; else {
-
-              int relay = (getValue(buf_rs_console,' ', 1)).toInt();
-              int stat = (getValue(buf_rs_console,' ', 2)).toInt();
-              
-              if(getValue(buf_rs_console,' ', 0) == "r" || getValue(buf_rs_console,' ', 0) == "R")
-                set_relay(relay,stat);
-                  else
-                set_matrix_led(relay,stat);
-
-              buf_rs_console = "";
-              fpause(400);
-              }
-              }
-
-
-              
-      fpause(4);}//не трожь меня
-}
